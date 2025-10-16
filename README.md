@@ -27,6 +27,9 @@ The orchestration remains **event-driven**, **state-aware**, and **resilient to 
 - **Claude Web**: Used for brainstorming architectural decisions, evaluating design trade-offs, and planning the overall system architecture.
 - **Claude Code**: Used as a coding assistant for implementation, refactoring, and debugging
 
+- **Excalidraw**: Charts and diagrams are designed on Excalidraw
+- **Text to Audio**: I used an AI voice-over for the demo video because I didn’t have much time left. so have to quickly makeit.
+
 ---
 
 ## Architecture Diagram
@@ -169,7 +172,7 @@ This is fully vibe coded.
 ### 1. Clone the Repository
 
 ```bash
-git clone 
+git clone https://link.excalidraw.com/l/7fmTiDrE4i9/32FXRHi4XIz
 cd 
 ```
 
