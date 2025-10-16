@@ -10,6 +10,16 @@ Built for environments where critical actions (deployments, purchases, contracts
 
 ---
 
+## Demo Video
+
+[![Watch Demo Video](https://img.youtube.com/vi/QvhpB0dvc-M/maxresdefault.jpg)](https://youtu.be/QvhpB0dvc-M)
+
+**[▶Watch Full Demo on YouTube](https://youtu.be/QvhpB0dvc-M)**
+
+See the complete workflow: creating multi-step workflows, Slack approvals, timeout handling, retry logic, and real-time chat updates.
+
+---
+
 ## Problem Statement
 
 Modern agent systems often require **human approvals or feedback** before executing critical actions—a purchase, a deployment, a message, a contract.
