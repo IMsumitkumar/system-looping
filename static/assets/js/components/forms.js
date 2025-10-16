@@ -9,7 +9,7 @@ const CreateWorkflow = {
   currentMode: 'simple',
 
   setMode(mode) {
-// console.log('[DEBUG CreateWorkflow.setMode] Called with mode:', mode);
+    console.log('[DEBUG CreateWorkflow.setMode] Called with mode:', mode);
     this.currentMode = mode;
 
     // Get all elements with null checks
@@ -18,7 +18,7 @@ const CreateWorkflow = {
     const simpleSection = document.getElementById('simpleWorkflowSection');
     const multiStepSection = document.getElementById('multiStepWorkflowSection');
 
-// console.log('[DEBUG CreateWorkflow.setMode] Elements found:', {
+    console.log('[DEBUG CreateWorkflow.setMode] Elements found:', {
       simpleBtn: !!simpleBtn,
       multiStepBtn: !!multiStepBtn,
       simpleSection: !!simpleSection,
@@ -26,7 +26,7 @@ const CreateWorkflow = {
     });
 
     if (!simpleBtn || !multiStepBtn || !simpleSection || !multiStepSection) {
-// console.error('[DEBUG CreateWorkflow.setMode] ERROR: Some elements not found!');
+      console.error('[DEBUG CreateWorkflow.setMode] ERROR: Some elements not found!');
       return;
     }
 
@@ -40,22 +40,22 @@ const CreateWorkflow = {
     simpleSection.classList.toggle('hidden', mode !== 'simple');
     multiStepSection.classList.toggle('hidden', mode !== 'multi-step');
 
-// console.log('[DEBUG CreateWorkflow.setMode] After toggle, classes:', {
+    console.log('[DEBUG CreateWorkflow.setMode] After toggle, classes:', {
       simpleSection: simpleSection.className,
       multiStepSection: multiStepSection.className
     });
 
     // Initialize step builder if switching to multi-step
     if (mode === 'multi-step') {
-// console.log('[DEBUG CreateWorkflow.setMode] Initializing StepBuilder...');
+      console.log('[DEBUG CreateWorkflow.setMode] Initializing StepBuilder...');
       if (typeof StepBuilder !== 'undefined') {
         StepBuilder.init();
       } else {
-// console.error('[DEBUG CreateWorkflow.setMode] ERROR: StepBuilder is not defined!');
+        console.error('[DEBUG CreateWorkflow.setMode] ERROR: StepBuilder is not defined!');
       }
     }
 
-// console.log('[DEBUG CreateWorkflow.setMode] Completed');
+    console.log('[DEBUG CreateWorkflow.setMode] Completed');
   }
 };
 
@@ -64,29 +64,40 @@ const Forms = {
    * Initialize create workflow form
    */
   initCreateWorkflow() {
-// console.log('[DEBUG Forms.initCreateWorkflow] ========== CALLED ==========');
+    console.log('[DEBUG Forms.initCreateWorkflow] ========== CALLED ==========');
 
     const form = document.getElementById('createWorkflowForm');
-// console.log('[DEBUG Forms.initCreateWorkflow] Form found:', !!form);
+    console.log('[DEBUG Forms.initCreateWorkflow] Form found:', !!form);
 
     if (!form) {
-// console.error('[DEBUG Forms.initCreateWorkflow] ERROR: Form not found! Exiting.');
+      console.error('[DEBUG Forms.initCreateWorkflow] ERROR: Form not found! Exiting.');
       return;
     }
 
-    form.addEventListener('submit', (e) => this.handleCreateWorkflow(e));
-// console.log('[DEBUG Forms.initCreateWorkflow] Form submit listener attached');
+    // Remove existing submit listener to prevent duplicates
+    const oldForm = form.cloneNode(true);
+    form.parentNode.replaceChild(oldForm, form);
+    const newForm = document.getElementById('createWorkflowForm');
+
+    newForm.addEventListener('submit', (e) => this.handleCreateWorkflow(e));
+    console.log('[DEBUG Forms.initCreateWorkflow] Form submit listener attached');
 
     // Initialize to simple mode
-// console.log('[DEBUG Forms.initCreateWorkflow] Calling CreateWorkflow.setMode("simple")...');
+    console.log('[DEBUG Forms.initCreateWorkflow] Calling CreateWorkflow.setMode("simple")...');
     CreateWorkflow.setMode('simple');
 
     // Example buttons (if they exist)
     const exampleButtons = document.querySelectorAll('[data-example]');
-// console.log('[DEBUG Forms.initCreateWorkflow] Example buttons found:', exampleButtons.length);
+    console.log('[DEBUG Forms.initCreateWorkflow] Example buttons found:', exampleButtons.length);
     exampleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const exampleType = btn.dataset.example;
+      // Remove old listeners by cloning
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+
+      newBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('[DEBUG] Example button clicked:', newBtn.dataset.example);
+        const exampleType = newBtn.dataset.example;
         this.loadExample(exampleType);
       });
     });
@@ -95,40 +106,46 @@ const Forms = {
     const simpleBtn = document.getElementById('toggleSimpleWorkflow');
     const multiStepBtn = document.getElementById('toggleMultiStepWorkflow');
 
-// console.log('[DEBUG Forms.initCreateWorkflow] Toggle buttons:', {
+    console.log('[DEBUG Forms.initCreateWorkflow] Toggle buttons:', {
       simpleBtn: !!simpleBtn,
       multiStepBtn: !!multiStepBtn
     });
 
     if (simpleBtn) {
-      // Use capture phase to intercept before extensions
-      simpleBtn.addEventListener('click', (e) => {
-// console.log('[DEBUG Forms.initCreateWorkflow] ★★★ SIMPLE BUTTON CLICKED ★★★');
+      // Clone to remove old listeners
+      const newSimpleBtn = simpleBtn.cloneNode(true);
+      simpleBtn.parentNode.replaceChild(newSimpleBtn, simpleBtn);
+
+      newSimpleBtn.addEventListener('click', (e) => {
+        console.log('[DEBUG Forms.initCreateWorkflow] ★★★ SIMPLE BUTTON CLICKED ★★★');
         e.preventDefault();
-        e.stopPropagation(); // Prevent extension interference
-        e.stopImmediatePropagation(); // Stop other listeners
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         CreateWorkflow.setMode('simple');
-      }, true); // true = capture phase (fires before bubbling)
-// console.log('[DEBUG Forms.initCreateWorkflow] Simple button listener attached (capture phase)');
+      }, true);
+      console.log('[DEBUG Forms.initCreateWorkflow] Simple button listener attached (capture phase)');
     } else {
-// console.error('[DEBUG Forms.initCreateWorkflow] ERROR: Simple button not found!');
+      console.error('[DEBUG Forms.initCreateWorkflow] ERROR: Simple button not found!');
     }
 
     if (multiStepBtn) {
-      // Use capture phase to intercept before extensions
-      multiStepBtn.addEventListener('click', (e) => {
-// console.log('[DEBUG Forms.initCreateWorkflow] ★★★ MULTI-STEP BUTTON CLICKED ★★★');
+      // Clone to remove old listeners
+      const newMultiStepBtn = multiStepBtn.cloneNode(true);
+      multiStepBtn.parentNode.replaceChild(newMultiStepBtn, multiStepBtn);
+
+      newMultiStepBtn.addEventListener('click', (e) => {
+        console.log('[DEBUG Forms.initCreateWorkflow] ★★★ MULTI-STEP BUTTON CLICKED ★★★');
         e.preventDefault();
-        e.stopPropagation(); // Prevent extension interference
-        e.stopImmediatePropagation(); // Stop other listeners
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         CreateWorkflow.setMode('multi-step');
-      }, true); // true = capture phase (fires before bubbling)
-// console.log('[DEBUG Forms.initCreateWorkflow] Multi-step button listener attached (capture phase)');
+      }, true);
+      console.log('[DEBUG Forms.initCreateWorkflow] Multi-step button listener attached (capture phase)');
     } else {
-// console.error('[DEBUG Forms.initCreateWorkflow] ERROR: Multi-step button not found!');
+      console.error('[DEBUG Forms.initCreateWorkflow] ERROR: Multi-step button not found!');
     }
 
-// console.log('[DEBUG Forms.initCreateWorkflow] ========== COMPLETED ==========');
+    console.log('[DEBUG Forms.initCreateWorkflow] ========== COMPLETED ==========');
   },
 
   /**

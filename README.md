@@ -29,6 +29,18 @@ The orchestration remains **event-driven**, **state-aware**, and **resilient to 
 
 ---
 
+## Architecture Diagram
+
+> Click on the diagram below to view the full interactive architecture on Excalidraw
+
+<a href="https://link.excalidraw.com/l/7fmTiDrE4i9/32FXRHi4XIz" target="_blank">
+  <img src="./image.png" alt="System Architecture Diagram" width="800">
+</a>
+
+**[Please click me - View Full Architecture Diagram](https://link.excalidraw.com/l/7fmTiDrE4i9/32FXRHi4XIz)**
+
+---
+
 ## Key Features
 
 ### 1. State Machine
