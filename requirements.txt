@@ -1,0 +1,38 @@
+# Core Framework
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# Database
+sqlalchemy[asyncio]
+aiosqlite
+asyncpg
+alembic
+
+# HTTP Client
+httpx
+
+# Slack Integration
+slack-sdk
+
+# Resilience
+tenacity
+pybreaker
+
+# Logging
+structlog
+
+# Agent Integration Layer
+openai
+streamlit
+
+# Security
+python-multipart
+
+# Templates
+jinja2
+
+# Development
+pytest
+pytest-asyncio

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Human-in-the-Loop Workflow Orchestration Dashboard - Production-grade UI">
+    <title>Workflow Dashboard - Human-in-the-Loop Orchestration</title>
+
+    <!-- CSS Imports (Order matters!) -->
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/typography.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/modals.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <!-- Preconnect to API server for faster requests -->
+    <link rel="preconnect" href="http://localhost:8000">
+</head>
+<body>
+    <!-- Skip to main content (Accessibility) -->
+    <a href="#main-content" class="skip-to-main">Skip to main content</a>
+
+    <!-- Application Container -->
+    <div id="app">
+        <!-- Sidebar Navigation (Rendered by JS) -->
+        <aside id="sidebar"></aside>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <!-- DASHBOARD PAGE -->
+            <div id="page-dashboard" class="page">
+                <header class="page-header">
+                    <h1 class="page-header__title">Dashboard</h1>
+                    <div class="page-header__actions">
+                        <button class="btn btn--secondary" onclick="Dashboard.load()">
+                            <span class="icon">${Icons.arrowPath(16)}</span>
+                            <span>Refresh</span>
+                        </button>
+                        <button class="btn btn--chat-agent" onclick="window.open(CONFIG.CHAT_AGENT_URL, '_blank')">
+                            <span class="icon">${Icons.chatBubble(16)}</span>
+                            <span>Chat Agent</span>
+                        </button>
+                        <button class="btn btn--primary" onclick="Sidebar.navigateTo('create')">
+                            <span class="icon">${Icons.plus(16)}</span>
+                            <span>Create Workflow</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="page-content">
+                    <!-- Metrics Grid (Rendered by JS) -->
+                    <div id="metricsGrid" class="mb-8"></div>
+
+                    <!-- Urgent Approvals Section -->
+                    <section class="section">
+                        <div class="section__header">
+                            <h2 class="section__title">
+                                <span class="icon">${Icons.bolt(20)}</span>
+                                <span>Urgent Approvals</span>
+                            </h2>
+                        </div>
+                        <div id="urgentApprovalsList"></div>
+                    </section>
+
+                    <!-- Recent Activity Section -->
+                    <section class="section">
+                        <div class="section__header">
+                            <h2 class="section__title">
+                                <span class="icon">${Icons.clock(20)}</span>
+                                <span>Recent Activity</span>
+                            </h2>
+                        </div>
+                        <div class="timeline" id="recentTimeline"></div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- WORKFLOWS PAGE -->
+            <div id="page-workflows" class="page hidden">
+                <header class="page-header">
+                    <h1 class="page-header__title">Workflows</h1>
+                    <div class="page-header__actions">
+                        <button class="btn btn--secondary" onclick="Workflows.load()">
+                            <span class="icon">${Icons.arrowPath(16)}</span>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="page-content">
+                    <div class="filter-bar">
+                        <input type="text" class="form-input filter-bar__search" placeholder="Search workflows..."
+                               id="workflowSearch" oninput="Workflows.filter()">
+                        <select class="form-select" id="stateFilter" onchange="Workflows.load()">
+                            <option value="">All States</option>
+                            <option value="CREATED">Created</option>
+                            <option value="RUNNING">Running</option>
+                            <option value="WAITING_APPROVAL">Waiting Approval</option>
+                            <option value="APPROVED">Approved</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="FAILED">Failed</option>
+                            <option value="TIMEOUT">Timeout</option>
+                        </select>
+                    </div>
+
+                    <div class="workflow-list" id="workflowList"></div>
+                </div>
+            </div>
+
+            <!-- APPROVALS PAGE -->
+            <div id="page-approvals" class="page hidden">
+                <header class="page-header">
+                    <h1 class="page-header__title">Approvals</h1>
+                    <div class="page-header__actions">
+                        <button class="btn btn--secondary" onclick="Approvals.load()">
+                            <span class="icon">${Icons.arrowPath(16)}</span>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="page-content">
+                    <div id="approvalsList"></div>
+                </div>
+            </div>
+
+            <!-- CREATE WORKFLOW PAGE -->
+            <div id="page-create" class="page hidden">
+                <header class="page-header">
+                    <h1 class="page-header__title">Create Workflow</h1>
+                </header>
+
+                <div class="page-content">
+                    <div class="card" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="card__header">
+                            <h3 class="card__title">Quick Examples</h3>
+                        </div>
+                        <div class="mb-6" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <button class="btn btn--secondary btn--sm" data-example="deployment" type="button">Deployment</button>
+                            <button class="btn btn--secondary btn--sm" data-example="purchase" type="button">Purchase Order</button>
+                            <button class="btn btn--secondary btn--sm" data-example="migration" type="button">DB Migration</button>
+                            <button class="btn btn--secondary btn--sm" data-example="feature" type="button">Feature Flag</button>
+                            <button class="btn btn--secondary btn--sm" data-example="contract" type="button">Contract</button>
+                            <button class="btn btn--secondary btn--sm" data-example="refund" type="button">Refund</button>
+                        </div>
+
+                        <!-- Workflow Type Toggle -->
+                        <div class="mb-6" style="display: flex; gap: 12px; border-bottom: 1px solid var(--border-default); padding-bottom: 16px;">
+                            <button class="btn btn--primary" id="toggleSimpleWorkflow" type="button">
+                                Simple (Single Approval)
+                            </button>
+                            <button class="btn btn--secondary" id="toggleMultiStepWorkflow" type="button">
+                                Multi-Step (Tasks + Approvals)
+                            </button>
+                        </div>
+
+                        <form id="createWorkflowForm">
+                            <!-- Basic Info -->
+                            <div class="form-group">
+                                <label class="form-label form-label--required">Workflow Type</label>
+                                <input type="text" class="form-input" id="workflowType" placeholder="deployment" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Context (JSON)</label>
+                                <textarea class="form-textarea" id="workflowContext"
+                                          placeholder='{"env": "production", "service": "api"}' style="min-height: 100px;"></textarea>
+                            </div>
+
+                            <!-- Simple Workflow Section -->
+                            <div id="simpleWorkflowSection">
+                                <div class="form-group">
+                                    <label class="form-label">Approval Title</label>
+                                    <input type="text" class="form-input" id="approvalTitle" placeholder="Production Deployment Approval">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Approval Description</label>
+                                    <textarea class="form-textarea" id="approvalDescription"
+                                              placeholder="Deploy service to production environment"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Timeout (seconds)</label>
+                                    <input type="number" class="form-input" id="approvalTimeout" value="3600" min="60" max="604800">
+                                </div>
+                            </div>
+
+                            <!-- Multi-Step Workflow Section -->
+                            <div id="multiStepWorkflowSection" class="hidden">
+                                <div class="mb-4" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="margin: 0; font-size: 16px; font-weight: 600;">Workflow Steps</h4>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button type="button" class="btn btn--secondary btn--sm" onclick="StepBuilder.addTaskStep()">
+                                            <span class="icon"></span>
+                                            Add Task
+                                        </button>
+                                        <button type="button" class="btn btn--secondary btn--sm" onclick="StepBuilder.addApprovalStep()">
+                                            <span class="icon"></span>
+                                            Add Approval
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="stepBuilderContainer"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Idempotency Key (Optional)
+                                    <span class="text-secondary text-xs font-normal"> - Prevents duplicate workflows</span>
+                                </label>
+                                <input type="text" class="form-input" id="idempotencyKey" placeholder="unique-key-123">
+                            </div>
+
+                            <button type="submit" class="btn btn--primary" style="width: 100%;">
+                                <span class="icon"></span>
+                                <span>Create Workflow</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DEAD LETTER QUEUE PAGE -->
+            <div id="page-dlq" class="page hidden">
+                <header class="page-header">
+                    <h1 class="page-header__title">Dead Letter Queue</h1>
+                    <div class="page-header__actions">
+                        <button class="btn btn--secondary" onclick="DLQ.testDLQ()">
+                            <span class="icon"></span>
+                            Test DLQ
+                        </button>
+                        <button class="btn btn--warning" onclick="DLQ.retryAll()">
+                            <span class="icon"></span>
+                            Retry All
+                        </button>
+                        <button class="btn btn--danger" onclick="DLQ.clearAll()">
+                            <span class="icon"></span>
+                            Clear All
+                        </button>
+                        <button class="btn btn--secondary" onclick="DLQ.load()">Refresh</button>
+                    </div>
+                </header>
+
+                <div class="page-content">
+                    <div class="card mb-6">
+                        <p class="text-secondary">
+                            Events that failed after 3 retry attempts are moved here for inspection and manual recovery.
+                            After fixing bugs in your code, use <strong>Retry</strong> to republish events.
+                        </p>
+                    </div>
+
+                    <div class="filter-bar">
+                        <select class="form-select" id="dlqFilter" onchange="DLQ.load()">
+                            <option value="">All Event Types</option>
+                            <option value="workflow.started">workflow.started</option>
+                            <option value="approval.requested">approval.requested</option>
+                            <option value="approval.received">approval.received</option>
+                            <option value="approval.timeout">approval.timeout</option>
+                        </select>
+                    </div>
+
+                    <div id="dlqList"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation (Rendered by JS) -->
+    <nav class="bottom-nav"></nav>
+
+    <!-- Toast Container (Rendered by JS) -->
+    <div id="toast-container"></div>
+
+    <!-- Modal Root (Rendered by JS) -->
+    <div id="modal-root"></div>
+
+    <!-- Environment Configuration (Injected by Backend) -->
+    <script>
+        // Backend-injected configuration (overrides config.js defaults)
+        window.ENV_CONFIG = {
+            API_BASE_URL: "{{ api_base_url }}",
+            CHAT_AGENT_URL: "{{ chat_agent_url }}"
+        };
+    </script>
+
+    <!-- JavaScript Imports (Order matters!) -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/icons.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/state.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/components/modal.js"></script>
+    <script src="assets/js/components/sidebar.js"></script>
+    <script src="assets/js/components/metrics.js"></script>
+    <script src="assets/js/components/workflows.js"></script>
+    <script src="assets/js/components/approvals.js"></script>
+    <script src="assets/js/components/step-builder.js"></script>
+    <script src="assets/js/components/forms.js"></script>
+    <script src="assets/js/app.js"></script>
+
+    <!-- Template literals in HTML need to be replaced by JavaScript -->
+    <script>
+        // Replace template literals with actual icon calls
+        document.querySelectorAll('.icon').forEach(icon => {
+            const iconHTML = icon.innerHTML.trim();
+            if (iconHTML.startsWith('${Icons.')) {
+                // This is a placeholder, remove it as icons are rendered by JS
+                icon.innerHTML = '';
+            }
+        });
+    </script>
+</body>
+</html>

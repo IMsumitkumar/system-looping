@@ -1,0 +1,428 @@
+/**
+ * Modal & Toast System
+ * Custom confirmation modals and toast notifications
+ */
+
+/* ========================================
+   MODAL OVERLAY
+   ======================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--surface-overlay);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-backdrop);
+  animation: modal-fade-in var(--duration-base) var(--ease-out);
+  padding: var(--space-4);
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   MODAL CONTENT
+   ======================================== */
+
+.modal {
+  background-color: var(--surface-primary);
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-2xl);
+  animation: modal-slide-up var(--duration-slow) var(--ease-spring);
+  position: relative;
+  z-index: var(--z-modal);
+}
+
+@keyframes modal-slide-up {
+  from {
+    transform: translateY(40px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.modal__header {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.modal__title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.modal__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-default);
+  color: var(--gray-600);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.modal__close:hover {
+  background-color: var(--surface-hover);
+  color: var(--gray-900);
+}
+
+/* Modal Body */
+.modal__body {
+  padding: var(--space-6);
+  color: var(--gray-700);
+  line-height: var(--leading-relaxed);
+}
+
+/* Modal Footer */
+.modal__footer {
+  padding: var(--space-6);
+  border-top: 1px solid var(--border-default);
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   CONFIRMATION MODAL VARIANTS
+   ======================================== */
+
+.modal--default .modal__header {
+  border-bottom-color: var(--border-default);
+}
+
+.modal--warning .modal__header {
+  background-color: var(--state-warning-bg);
+  border-bottom-color: var(--state-warning-border);
+}
+
+.modal--warning .modal__title {
+  color: var(--state-warning-text);
+}
+
+.modal--danger .modal__header {
+  background-color: var(--state-failed-bg);
+  border-bottom-color: var(--state-failed-border);
+}
+
+.modal--danger .modal__title {
+  color: var(--state-failed-text);
+}
+
+.modal--success .modal__header {
+  background-color: var(--state-completed-bg);
+  border-bottom-color: var(--state-completed-border);
+}
+
+.modal--success .modal__title {
+  color: var(--state-completed-text);
+}
+
+/* Modal Icon */
+.modal__icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+}
+
+.modal__icon--info {
+  background-color: var(--state-running-bg);
+  color: var(--state-running-text);
+}
+
+.modal__icon--warning {
+  background-color: var(--state-warning-bg);
+  color: var(--state-warning-text);
+}
+
+.modal__icon--danger {
+  background-color: var(--state-failed-bg);
+  color: var(--state-failed-text);
+}
+
+.modal__icon--success {
+  background-color: var(--state-completed-bg);
+  color: var(--state-completed-text);
+}
+
+/* Modal Message */
+.modal__message {
+  font-size: var(--text-sm);
+  color: var(--gray-700);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+/* ========================================
+   TOAST NOTIFICATIONS
+   ======================================== */
+
+#toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  pointer-events: none;
+  max-width: 420px;
+}
+
+.toast {
+  background-color: var(--gray-900);
+  color: var(--color-white);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 320px;
+  max-width: 420px;
+  pointer-events: auto;
+  animation: toast-slide-in var(--duration-slow) var(--ease-spring);
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+}
+
+/* Toast Variants */
+.toast--success {
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.toast--error {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+}
+
+.toast--warning {
+  background-color: var(--color-warning);
+  color: var(--color-white);
+}
+
+.toast--info {
+  background-color: var(--color-info);
+  color: var(--color-white);
+}
+
+/* Toast Icon */
+.toast__icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Toast Message */
+.toast__message {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-snug);
+}
+
+/* Toast Close Button */
+.toast__close {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  flex-shrink: 0;
+  margin-left: var(--space-2);
+}
+
+.toast__close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Toast Progress Bar */
+.toast__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.3);
+  animation: toast-progress linear;
+  transform-origin: left;
+}
+
+@keyframes toast-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Toast Action Button */
+.toast__action {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  border: none;
+  white-space: nowrap;
+}
+
+.toast__action:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+
+@media (max-width: 640px) {
+  .modal {
+    max-width: 100%;
+    margin: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 95vh;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  @keyframes modal-slide-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  #toast-container {
+    top: auto;
+    bottom: var(--space-6);
+    left: var(--space-4);
+    right: var(--space-4);
+    max-width: none;
+  }
+
+  .toast {
+    min-width: 0;
+    max-width: none;
+  }
+
+  @keyframes toast-slide-in {
+    from {
+      transform: translateY(100px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes toast-slide-out {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(100px);
+      opacity: 0;
+    }
+  }
+}
+
+/* ========================================
+   BACKDROP BLUR SUPPORT
+   ======================================== */
+
+@supports not (backdrop-filter: blur(4px)) {
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+}
+
+/* ========================================
+   FOCUS TRAP
+   ======================================== */
+
+.modal-overlay:focus {
+  outline: none;
+}
+
+/* First and last focusable element helpers */
+.modal [tabindex="0"]:first-of-type:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
