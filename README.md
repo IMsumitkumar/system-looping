@@ -172,7 +172,7 @@ This is fully vibe coded.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://link.excalidraw.com/l/7fmTiDrE4i9/32FXRHi4XIz
+git clone https://github.com/IMsumitkumar/system-looping
 cd 
 ```
 
